@@ -1,23 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import './App.scss';
 
-function App() {
+const App = () => {
+
+  const { reset, handleSubmit, control, formState } = useForm();
+  const [formData, setFormData] = useState({});
+
+  const onSubmit = (data) => setFormData(data);
+  const resetForm = () => setFormData({});
+
+  useEffect(() => {
+    if (formState.isSubmitSuccessful) {
+      reset()
+    }
+  }, [formState, reset])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h2>Submitted Data:</h2>
+      <pre>{JSON.stringify(formData, null, 2)}</pre>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="fields">
+          <div className="fields__controller">
+            <Controller
+              name="firstName"
+              control={control}
+              defaultValue=""
+              rules={{ required: true }}
+              render={({ field }) => <input {...field} placeholder="First Name" />}
+            />
+          </div>
+          <div className="fields__controller">
+            <Controller
+              name="lastName"
+              control={control}
+              defaultValue=""
+              rules={{ required: true }}
+              render={({ field }) => <input {...field} placeholder="Last Name" />}
+            />
+          </div>
+        </div>
+        <div className="buttons">
+          <button className="buttons--form" type="submit">
+            Submit
+          </button>
+          <button className="buttons--form" type="button" onClick={resetForm}>
+            Reset
+          </button>
+        </div>
+      </form>
+
     </div>
   );
 }
